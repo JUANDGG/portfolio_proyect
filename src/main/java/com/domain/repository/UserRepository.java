@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import com.persistence.entity.User;
 
 @Repository
-public interface RepositoryUser  extends JpaRepository<User ,Long>{
+public interface UserRepository  extends JpaRepository<User ,Long>{
 
 } 

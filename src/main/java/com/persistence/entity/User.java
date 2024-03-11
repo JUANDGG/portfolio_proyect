@@ -1,11 +1,9 @@
 package com.persistence.entity;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.persistence.dto.PasswordHashDTO;
 import com.persistence.dto.UserDTO;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +11,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 
@@ -36,9 +35,8 @@ public class User {
     @Column(columnDefinition ="varchar(50)")
     private String profession ;
     private boolean stateUser ;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<PasswordHash> passwordHash;
-
+   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+   private PasswordHash passwordHash;
 
     public UserDTO toDTO() {
         return UserDTO.builder()
@@ -50,11 +48,12 @@ public class User {
             .phone(this.phone)
             .profession(this.profession)
             .stateUser(this.stateUser)
-            .passwordHashId(this.passwordHash.get(0).getId())
+            .passwordHashId(this.passwordHash.getId())
             .build();
     }
-    public static User fromDTO(UserDTO userDto) {
-        return User.builder()
+    
+    public static User fromDTO(UserDTO userDto, PasswordHashDTO passwordHashDTO) {
+        User user = User.builder()
             .id(userDto.getId())
             .name(userDto.getName())
             .lastName(userDto.getLastName())
@@ -64,5 +63,10 @@ public class User {
             .profession(userDto.getProfession())
             .stateUser(userDto.isStateUser())
             .build();
+
+        PasswordHash passwordHash = PasswordHash.fromDTO(passwordHashDTO);        
+        user.setPasswordHash(passwordHash);
+
+        return user;
     }
 }

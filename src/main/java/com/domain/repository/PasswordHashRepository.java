@@ -4,6 +4,6 @@ import org.springframework.stereotype.Service;
 import com.persistence.entity.PasswordHash;
 
 @Service
-public interface RepositoryPasswordHash extends JpaRepository<PasswordHash,Long>{
+public interface PasswordHashRepository extends JpaRepository<PasswordHash,Long>{
     
 }

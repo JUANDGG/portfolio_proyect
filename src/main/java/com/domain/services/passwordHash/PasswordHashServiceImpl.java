@@ -4,45 +4,47 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import com.domain.repository.RepositoryPasswordHash;
+import com.domain.repository.PasswordHashRepository;
 import com.persistence.dto.PasswordHashDTO;
-import com.persistence.entity.User;
+import com.persistence.entity.PasswordHash;
 
 @Service
 public class PasswordHashServiceImpl implements PasswordHashService{
 
     @Autowired
-    private RepositoryPasswordHash repositoryPasswordHash ;
+    private PasswordHashRepository repositoryPasswordHash ;
 
 
 
     @Override
     public List<PasswordHashDTO> read() {
-        List<User> users = repositoryPasswordHash.findAll();
-        return users.stream()
-                .map(PasswordHash::toDTO) // Aquí está el error
+        List<PasswordHash> passwordHash = repositoryPasswordHash.findAll();
+        return passwordHash.stream()
+                .map(PasswordHash::toDTO) 
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void create(PasswordHashDTO passwordHashDTO) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'create'");
+    public  ResponseEntity<PasswordHashDTO> create(PasswordHashDTO passwordHashDTO) {
+        var passwordHash = PasswordHash.fromDTO(passwordHashDTO);
+        passwordHash = repositoryPasswordHash.save(passwordHash);
+        return ResponseEntity.ok(passwordHash.toDTO());
     }
 
     @Override
-    public void update(PasswordHashDTO passwordHashDTO) {
+    public ResponseEntity<Void> update(PasswordHashDTO passwordHashDTO) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
     @Override
-    public void delete(long id) {
+    public ResponseEntity<Void> delete(long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'delete'");
     }
-    
+
+  
     
 }

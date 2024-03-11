@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 
@@ -32,10 +33,10 @@ public class PasswordHash {
     @Getter @Setter
     private LocalDate creationDate ;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id")
     @Getter @Setter
-    private User user ;
+    private User user;
 
 
 

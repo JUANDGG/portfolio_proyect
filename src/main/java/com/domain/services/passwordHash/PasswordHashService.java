@@ -2,12 +2,14 @@ package com.domain.services.passwordHash;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
 import com.persistence.dto.PasswordHashDTO;
 
 public interface  PasswordHashService {
     List<PasswordHashDTO> read ();
-    void create(PasswordHashDTO passwordHashDTO);
-    void update(PasswordHashDTO passwordHashDTO);
-    void delete (long id);
+    ResponseEntity<PasswordHashDTO> create(PasswordHashDTO passwordHashDTO);
+    ResponseEntity<Void> update(PasswordHashDTO passwordHashDTO);
+    ResponseEntity<Void> delete (long id);
     
 }
