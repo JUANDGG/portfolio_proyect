@@ -41,10 +41,6 @@ public class User {
 
 
     public UserDTO toDTO() {
-        List<Long> passwordHashIds = this.passwordHash.stream()
-            .map(PasswordHash::getId)
-            .collect(Collectors.toList());
-
         return UserDTO.builder()
             .id(this.id) 
             .name(this.name)
@@ -54,17 +50,19 @@ public class User {
             .phone(this.phone)
             .profession(this.profession)
             .stateUser(this.stateUser)
-            .passwordHashIds(passwordHashIds.get(0))
+            .passwordHashId(this.passwordHash.get(0).getId())
             .build();
     }
-
-    public static PasswordHash fromDTO(PasswordHashDTO passwordHashDTO) {
-        return PasswordHash.builder()
-            .id(passwordHashDTO.getId())
-            .hash(passwordHashDTO.getHash())
-            .stateHash(passwordHashDTO.isStateHash())
-            .creationDate(passwordHashDTO.getCreationDate())
-            .user(passwordHashDTO.getUser())
+    public static User fromDTO(UserDTO userDto) {
+        return User.builder()
+            .id(userDto.getId())
+            .name(userDto.getName())
+            .lastName(userDto.getLastName())
+            .birthDate(userDto.getBirthDate())
+            .email(userDto.getEmail())
+            .phone(userDto.getPhone())
+            .profession(userDto.getProfession())
+            .stateUser(userDto.isStateUser())
             .build();
     }
 }
