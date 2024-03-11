@@ -1,17 +1,12 @@
 package com.persistence.entity;
-
 import java.time.LocalDate;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import com.persistence.dto.PasswordHashDTO;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -24,12 +19,10 @@ public class PasswordHash {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter @Setter
     private long id ;
-    
+    @Getter @Setter 
     private String hash ;
-
     @Getter @Setter
     private boolean stateHash ;
-
     @Getter @Setter
     private LocalDate creationDate ;
 
@@ -40,15 +33,8 @@ public class PasswordHash {
 
 
 
-    public void setHash(String hash) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        this.hash = passwordEncoder.encode(hash);
-        this.hash = hash;
-    }
-
-    public PasswordHashDTO toDTO() {
+    public PasswordHashDTO entityToDto() {
         return PasswordHashDTO.builder()
-            .id(this.id)
             .hash(this.hash)
             .stateHash(this.stateHash)
             .creationDate(this.creationDate)
@@ -56,9 +42,8 @@ public class PasswordHash {
             .build();
     }
 
-    public static PasswordHash fromDTO(PasswordHashDTO passwordHashDTO) {
+    public static PasswordHash dtoToEntity(PasswordHashDTO passwordHashDTO) {
         return PasswordHash.builder()
-            .id(passwordHashDTO.getId())
             .hash(passwordHashDTO.getHash())
             .stateHash(passwordHashDTO.isStateHash())
             .creationDate(passwordHashDTO.getCreationDate())

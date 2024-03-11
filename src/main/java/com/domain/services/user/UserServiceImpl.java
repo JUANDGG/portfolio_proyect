@@ -1,67 +1,48 @@
 package com.domain.services.user;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import com.persistence.entity.PasswordHash;
-import com.persistence.entity.User ;
-import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.domain.repository.PasswordHashRepository;
 import com.domain.repository.UserRepository;
 import com.persistence.dto.PasswordHashDTO;
 import com.persistence.dto.UserDTO;
+import com.persistence.entity.PasswordHash;
+import com.persistence.entity.User;
+
+import jakarta.transaction.Transactional;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl {
 
     @Autowired
-    private UserRepository  userRepository ;
+    private UserRepository userRepository;
 
     @Autowired
-    private PasswordHashRepository passwordHashRepository ;
+    private PasswordHashRepository passwordHashRepository;
 
-    @Override
-    public List<UserDTO> read() {
-        List<User> user = userRepository.findAll() ;
-        return user.stream()
-            .map(User::toDTO)
-            .collect(Collectors.toList());
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
-    @Override
-    public ResponseEntity<UserDTO> create(UserDTO userDTO, PasswordHashDTO passwordHashDTO) {
-        //the user is saved first
-        User user = User.fromDTO(userDTO, passwordHashDTO);
-        User savedUser = userRepository.save(user);
-        // Convertir la entidad guardada a un DTO
-        UserDTO savedUserDTO = savedUser.toDTO();
+    @Transactional
+    public UserDTO createUserWithPasswordHash(UserDTO userDto, PasswordHashDTO passwordHashDto) {
+        // Convert DTOs to entities
+        User user = User.dtoToEntity(userDto, passwordHashDto);
+        PasswordHash passwordHash = PasswordHash.dtoToEntity(passwordHashDto);
 
-
-        var passwordHash = PasswordHash.fromDTO(passwordHashDTO);
+        // Set the relationship
+        user.setPasswordHash(passwordHash);
         passwordHash.setUser(user);
 
+        // Save both entities in the database
+        userRepository.save(user);
         passwordHashRepository.save(passwordHash);
 
-
-        // Devolver el DTO guardado
-        return new ResponseEntity<>(savedUserDTO, HttpStatus.CREATED);
-    } 
-
-    @Override
-    public ResponseEntity<Void> update(UserDTO userDTO) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        // Return the created user
+        return user.entityToDto();
     }
-
-    @Override
-    public ResponseEntity<Void> delete(long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
-    }
-    
 }
